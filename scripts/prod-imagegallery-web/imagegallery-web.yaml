@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imagegallery-web
+  labels:
+    app: nginx
+spec:
+  replicas: 2  # 设置副本数为2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: shuimu-registry-vpc.cn-shenzhen.cr.aliyuncs.com/dztk/web:v1
+        ports:
+        - containerPort: 80  # 容器暴露的端口
+        volumeMounts:
+        - name: timezone-config
+          mountPath: /etc/localtime
+          readOnly: true
+      volumes:
+      - name: timezone-config
+        hostPath:
+          path: /etc/localtime
+          type: File
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: imagegallery-web-service
+spec:
+  selector:
+    app: nginx  
+  type: ClusterIP
+  ports:
+   - port: 80  # Service的端口号
+     targetPort: 80  
+
+
