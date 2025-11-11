@@ -63,7 +63,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir('$APP_DIR') {
+                dir("$APP_DIR") {
                     sh '''
                         go mod tidy
                         go mod download
@@ -75,16 +75,14 @@ pipeline {
       
         stage('Deploy to Remote Server') {
             steps {
-		dir('$APP_DIR') 
+		dir("$APP_DIR") {
                     // Use SSH credentials to copy files to the remote server
                     sshagent(['jump-root']) {
                         //sh 'chmod 755 -R ./dist'
                         sh 'shasum ./$APP'
                         sh 'rsync -avzp ./$APP root@10.6.136.236:/opt/app/goapps'
-
-		{}
-                        
-                }
+					}        
+        }
             }
         }
     }
