@@ -62,7 +62,7 @@ pipeline {
                 sshagent(['jump-root']) {
                     sh 'chmod 755 -R ./dist'
                     sh 'shasum ./dist/index.html'
-                    sh 'rsync -avzp ./dist root@10.6.136.236:/opt/web/www.jinsuai.com'
+                    sh 'rsync -avzp ./dist root@10.6.136.236:/opt/web'
                         
                 }
             }
