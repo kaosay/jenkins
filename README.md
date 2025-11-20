@@ -4,7 +4,7 @@ How to use jenkins
 ## 1 Send message to lark
 
 ```
-    post {
+    //post {
         success {
             echo "-- ${APP} -- Deployment successful!"
             sh """
