@@ -28,3 +28,42 @@ How to use jenkins
               }'         
               """
         }
+```
+
+## How to call jenkins job
+```
+pipeline {
+    agent any
+    stages {
+        stage('Trigger Services') {
+            steps {
+                script {
+                    def services = [
+                        'ser-user': "${ser_user}",
+                        'ser-auth': "${ser_auth}",
+                        'ser-com': "${ser_com}",
+                        'ser-stat': "${ser_stat}",
+                        'ser-im': "${ser_im}"
+                    ]
+                    services.each { svc ->
+                        if (svc.value == "true") {
+                            stage(svc.key) {
+                                build job: 'te--ser-single',
+                                      parameters: [
+                                          string(name: 'APP', value: svc.key),
+                                          string(name: 'BRANCH', value: "${BRANCH}")
+                                      ],
+                                      //wait: true,
+                                      wait: false,
+                                      propagate: true
+                            }
+                        } else {
+                            echo "Skipped: ${svc.key}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
