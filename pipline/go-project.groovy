@@ -81,6 +81,7 @@ pipeline {
 		          dir("$APP") {
                     // Use SSH credentials to copy files to the remote server
                     sshagent(['kaosay']) {
+						//sh 'ssh -p33 -o StrictHostKeyChecking=no $REMOTE_HOST ls /opt'
                         sh 'shasum ./$APP'
                         sh 'rsync -avzp ./$APP $REMOTE_DIR'
                         sh 'ssh $REMOTE_HOST sudo pkill ${APP} || true'
