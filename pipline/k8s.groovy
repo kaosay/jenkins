@@ -135,3 +135,28 @@ COPY ./conf/log.xml /app/conf/log.xml
     writeFile(file: 'Dockerfile', text: df.stripIndent())
 
 }
+
+// shared library for send message to telegram
+def sendTelegram(status, emoji) {
+    def message = """
+📦 项目: <b>${JOB_NAME}</b> ${emoji}
+🌿 分支: ${BRANCH}
+🔖 镜像: ${FULL_IMAGE}
+🕐 构建时间: ${TIMESTAMP}
+
+📝 提交信息:
+   Commit: ${env.GIT_COMMIT_SHORT}
+   作者: ${env.GIT_COMMIT_AUTHOR}
+   提交时间: ${env.GIT_COMMIT_DATE}
+   消息: ${env.GIT_COMMIT_MSG}
+    """
+
+    sh """
+        curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage \
+        -d chat_id=${CHAT_ID} \
+        -d parse_mode=HTML \
+        -d text="${message}"
+    """
+    // Show branch in build number
+    currentBuild.displayName = "#${BUILD_NUMBER} ${BRANCH}"
+}
